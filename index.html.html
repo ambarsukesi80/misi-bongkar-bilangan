@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Misi Bongkar Bilangan — Matematika Kelas 1</title>
+<style>
+:root{--purple:#565bd7;--blue:#318bd5;--ink:#243452;--pale:#f0f3ff;--green:#dff7e8;--line:#dbe2ef}
+*{box-sizing:border-box}
+body{margin:0;padding:16px;background:linear-gradient(180deg,#f3f6ff,#fff7ed);font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink)}
+main{max-width:720px;margin:auto}
+.hero{padding:24px 16px;border-radius:22px;text-align:center;color:#fff;background:linear-gradient(135deg,var(--purple),var(--blue));box-shadow:0 8px 24px #303c7b22}
+.hero .emoji{font-size:42px}.hero h1{font-size:clamp(23px,5vw,32px);margin:6px 0}.hero p{margin:5px 0}
+.panel{margin-top:16px;background:white;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 5px 18px #2434520c}
+button,input{font:inherit}
+input{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:11px;margin:6px 0 14px}
+button{cursor:pointer}
+.primary{display:block;width:100%;border:0;border-radius:12px;background:var(--purple);color:white;font-weight:800;padding:14px;margin-top:10px}
+.secondary{display:block;width:100%;border:1px solid var(--line);border-radius:12px;background:white;color:var(--ink);font-weight:700;padding:12px;margin-top:10px}
+.topline{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-weight:750;font-size:14px}
+.progress{height:8px;background:#e8eaf3;border-radius:99px;overflow:hidden;margin:12px 0 16px}.progress div{height:100%;background:#38b68a;width:0;transition:width .2s}
+.picture{text-align:center;background:var(--pale);border-radius:14px;padding:14px;margin-bottom:16px}
+.objects{font-size:clamp(27px,7vw,39px);line-height:1.7;overflow-wrap:anywhere}
+.caption{font-size:13px}
+.question{font-size:20px;line-height:1.5;text-align:center;font-weight:800;margin:12px 0 18px}
+.options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.option{border:2px solid var(--line);border-radius:12px;background:#fff;padding:14px 8px;font-size:18px;font-weight:750;color:var(--ink);min-height:54px}
+.option.selected{border-color:#5666d9;background:#e9edff}
+.option.correct{border-color:#218653;background:var(--green);color:#176339}
+.option:disabled{cursor:default}
+.note{background:#f3f5fa;border-radius:12px;padding:13px;margin-top:14px;line-height:1.5}
+.barrow{margin:14px 0}.barlabel{display:flex;justify-content:space-between;gap:10px;font-size:14px;font-weight:700;margin-bottom:6px}
+.hidden{display:none!important}
+.score{text-align:center;font-size:40px;font-weight:900}
+.small{font-size:13px;line-height:1.6;color:#4c5870}
+.reviewitem{background:#f5f6fb;border-radius:12px;padding:12px;margin:10px 0;line-height:1.5}
+@media(max-width:420px){body{padding:10px}.panel{padding:14px}.options{gap:8px}.option{font-size:16px}}
+@media print{body{background:white}.hero{box-shadow:none}.primary,.secondary,#home,#game,#review{display:none!important}#result{display:block!important}.panel{box-shadow:none}}
+</style>
+</head>
+<body>
+<main>
+<header class="hero">
+<div class="emoji">🧩 🍎 ⭐</div>
+<h1>MISI BONGKAR BILANGAN</h1>
+<p>Game Matematika Kelas 1 SD</p>
+<p>Amati • Bongkar • Selesaikan</p>
+</header>
+
+<section id="home" class="panel">
+<h2>🎒 Ayo mulai petualangan!</h2>
+<label for="student">Nama murid (opsional)</label>
+<input id="student" type="text" placeholder="Tuliskan nama murid">
+<p>Jawab 10 tantangan untuk mengenali kemampuan menghitung benda, menguraikan bilangan, dan menjumlahkan bilangan sampai 20.</p>
+<button class="primary" id="start">🚀 Mulai Bermain</button>
+</section>
+
+<section id="game" class="panel hidden">
+<div class="topline"><span id="mission">MISI 1 · AMATI</span><span>⭐ <span id="stars">0</span></span><span>Soal <span id="number">1</span>/10</span></div>
+<div class="progress"><div id="progress"></div></div>
+<div class="picture"><div id="picture" class="objects">🍎 🍎 🍎</div><div id="caption" class="caption">Hitung benda-benda berikut!</div></div>
+<div id="question" class="question">Ada berapa apel?</div>
+<div id="options" class="options"></div>
+<div id="feedback" class="note hidden" aria-live="polite"></div>
+<button class="primary" id="check" disabled>Periksa Jawaban ✓</button>
+<button class="primary hidden" id="next">Soal Berikutnya ➜</button>
+<button class="secondary" id="menu">Kembali ke Menu</button>
+</section>
+
+<section id="result" class="hidden">
+<div class="hero"><div class="emoji">🏆</div><h1>MISI SELESAI!</h1><p id="studentResult"></p><div class="score" id="total">0/10</div><p id="award"></p></div>
+<div class="panel">
+<h2>📋 Hasil asesmen awal</h2>
+<div id="breakdown"></div>
+<div id="advice" class="note"></div>
+<p class="small">Skor merupakan petunjuk awal, bukan satu-satunya ukuran pemahaman. Guru sebaiknya juga mengamati cara murid menghitung dan meminta murid menjelaskan strateginya.</p>
+<button class="secondary" id="reviewBtn">Lihat Pembahasan</button>
+<button class="primary" id="again">🔄 Main Lagi</button>
+<button class="secondary" id="print">Cetak / Simpan Hasil</button>
+</div>
+</section>
+
+<section id="review" class="panel hidden">
+<h2>📝 Pembahasan Soal</h2>
+<div id="reviewList"></div>
+<button class="primary" id="return">Kembali ke Hasil</button>
+</section>
+</main>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const questions=[
+{m:0,s:'Menghitung benda',p:'🍎 🍎 🍎 🍎 🍎 🍎',c:'Hitung semua apel!',q:'Ada berapa apel?',o:['5','6','7','8'],a:'6',w:'Ada 6 apel. Hitung setiap apel satu kali.'},
+{m:0,s:'Menghitung benda',p:'⭐ ⭐ ⭐ ⭐ ⭐ ⭐ ⭐ ⭐',c:'Hitung semua bintang!',q:'Ada berapa bintang?',o:['7','8','9','10'],a:'8',w:'Ada 8 bintang.'},
+{m:1,s:'Dekomposisi bilangan',p:'🍊 🍊 🍊 🍊 🍊 🍊 🍊 🍊',c:'8 jeruk dibagi menjadi dua kelompok.',q:'Jika 5 jeruk di kelompok pertama, berapa di kelompok kedua?',o:['2','3','4','5'],a:'3',w:'8 = 5 + 3. Kelompok kedua berisi 3 jeruk.'},
+{m:1,s:'Dekomposisi bilangan',p:'🔵 🔵 🔵 🔵 🔵 🔵 🔵 🔵 🔵',c:'Lengkapi dua bagian bilangan.',q:'9 = 6 + …',o:['2','3','4','5'],a:'3',w:'9 = 6 + 3.'},
+{m:1,s:'Dekomposisi bilangan',p:'🟡 🟡 🟡 🟡 🟡 🟡 🟡 🟡 🟡 🟡',c:'Cari pasangan yang tepat.',q:'Pasangan bilangan yang jumlahnya 10 adalah …',o:['6 + 3','7 + 3','8 + 1','5 + 4'],a:'7 + 3',w:'7 + 3 = 10.'},
+{m:1,s:'Dekomposisi bilangan',p:'🧱 🧱 🧱 🧱 🧱 🧱 🧱 🧱 🧱 🧱 🧱 🧱',c:'Perhatikan bilangan 12.',q:'Manakah uraian yang berjumlah 12?',o:['6 + 6','7 + 6','8 + 3','9 + 2'],a:'6 + 6',w:'6 + 6 = 12.'},
+{m:2,s:'Penjumlahan',p:'🍓 🍓 🍓 🍓 🍓 🍓 🍓 🍓',c:'Tambahkan 5 stroberi.',q:'8 + 5 = …',o:['12','13','14','15'],a:'13',w:'8 + 2 = 10, kemudian tambah 3. Hasilnya 13.'},
+{m:2,s:'Strategi dekomposisi',p:'7 + (3 + 2)',c:'Gunakan strategi membuat 10.',q:'7 + 5. Pecah 5 menjadi 3 + 2.',o:['11','12','13','14'],a:'12',w:'7 + 3 = 10, kemudian 10 + 2 = 12.'},
+{m:2,s:'Strategi dekomposisi',p:'9 + (1 + 5)',c:'Pecah 6 menjadi 1 + 5.',q:'9 + 6 = 9 + 1 + 5 = …',o:['14','15','16','17'],a:'15',w:'9 + 1 = 10, kemudian 10 + 5 = 15.'},
+{m:2,s:'Penjumlahan sampai 20',p:'🌼 🌼 🌼 🌼 🌼 🌼 🌼 🌼 🌼 🌼',c:'Gunakan cara menghitung yang kamu pahami.',q:'12 + 5 = …',o:['15','16','17','18'],a:'17',w:'12 + 5 = 17.'}
+];
+let idx=0,score=0,choice='',locked=false,answers=[],student='';
+const missions=['AMATI','BONGKAR','SELESAIKAN'];
+function show(id){['home','game','result','review'].forEach(v=>$(v).classList.toggle('hidden',v!==id));}
+function render(){
+ const d=questions[idx];choice='';locked=false;
+ $('mission').textContent='MISI '+(d.m+1)+' · '+missions[d.m];
+ $('stars').textContent=score;$('number').textContent=idx+1;
+ $('progress').style.width=((idx+1)/questions.length*100)+'%';
+ $('picture').textContent=d.p;$('caption').textContent=d.c;$('question').textContent=d.q;
+ $('options').innerHTML='';
+ d.o.forEach((opt,n)=>{
+  const b=document.createElement('button');b.type='button';b.className='option';b.textContent=String.fromCharCode(65+n)+'. '+opt;
+  b.addEventListener('click',()=>{
+   if(locked)return;choice=opt;
+   Array.from($('options').children).forEach(x=>x.classList.remove('selected'));
+   b.classList.add('selected');$('check').disabled=false;
+  });
+  $('options').appendChild(b);
+ });
+ $('feedback').classList.add('hidden');$('check').classList.remove('hidden');$('check').disabled=true;$('next').classList.add('hidden');
+}
+function check(){
+ if(!choice||locked)return;locked=true;
+ const d=questions[idx],ok=choice===d.a;if(ok)score++;
+ answers.push({choice,ok});$('stars').textContent=score;
+ Array.from($('options').children).forEach(b=>{
+  const value=b.textContent.replace(/^[A-D]\.\s*/,'');b.disabled=true;
+  if(value===d.a)b.classList.add('correct');
+ });
+ $('feedback').textContent=(ok?'🌟 Hebat! Jawaban benar. ':'💡 Belum tepat. ')+d.w;
+ $('feedback').classList.remove('hidden');$('check').classList.add('hidden');$('next').classList.remove('hidden');
+ $('next').textContent=idx===questions.length-1?'Lihat Hasil 🏆':'Soal Berikutnya ➜';
+}
+function finish(){
+ show('result');$('studentResult').textContent=student?'Nama murid: '+student:'Hebat, Petualang Bilangan!';
+ $('total').textContent=score+'/10';$('award').textContent=score>=9?'🌟 Bintang Emas!':score>=6?'⭐ Petualang Hebat!':'💪 Terus berlatih!';
+ const groups=[{t:'Misi 1 · Menghitung benda',a:0,b:2},{t:'Misi 2 · Dekomposisi bilangan',a:2,b:6},{t:'Misi 3 · Penjumlahan dan strategi',a:6,b:10}];
+ $('breakdown').innerHTML='';
+ groups.forEach(g=>{
+  let n=0;for(let k=g.a;k<g.b;k++)if(answers[k]&&answers[k].ok)n++;
+  const row=document.createElement('div');row.className='barrow';
+  const label=document.createElement('div');label.className='barlabel';
+  const name=document.createElement('span');name.textContent=g.t;
+  const count=document.createElement('span');count.textContent=n+'/'+(g.b-g.a);
+  label.append(name,count);
+  const track=document.createElement('div');track.className='progress';
+  const fill=document.createElement('div');fill.style.width=(n/(g.b-g.a)*100)+'%';track.appendChild(fill);
+  row.append(label,track);$('breakdown').appendChild(row);
+ });
+ const decomp=answers.slice(2,6).filter(x=>x&&x.ok).length;
+ const add=answers.slice(6).filter(x=>x&&x.ok).length;
+ $('advice').textContent='Saran guru: '+(decomp<3?'Latih dekomposisi dengan tutup botol, kartu bilangan, dan bingkai sepuluh. ':'Lanjutkan dekomposisi dengan meminta murid menjelaskan caranya. ')+(add<3?'Peragakan penjumlahan menggunakan benda konkret.':'Berikan tantangan penjumlahan dengan strategi berbeda.');
+}
+$('start').addEventListener('click',()=>{student=$('student').value.trim();idx=0;score=0;answers=[];render();show('game');});
+$('check').addEventListener('click',check);
+$('next').addEventListener('click',()=>{if(idx<questions.length-1){idx++;render();}else finish();});
+$('menu').addEventListener('click',()=>show('home'));
+$('again').addEventListener('click',()=>{idx=0;score=0;answers=[];render();show('game');});
+$('reviewBtn').addEventListener('click',()=>{
+ $('reviewList').innerHTML='';
+ questions.forEach((d,n)=>{
+  const box=document.createElement('div');box.className='reviewitem';
+  const title=document.createElement('strong');title.textContent='Soal '+(n+1)+': '+d.q;
+  const ans=document.createElement('div');ans.textContent='Kunci jawaban: '+d.a;
+  const why=document.createElement('div');why.textContent=d.w;
+  box.append(title,ans,why);$('reviewList').appendChild(box);
+ });
+ show('review');
+});
+$('return').addEventListener('click',()=>show('result'));
+$('print').addEventListener('click',()=>{
+ let lines=['HASIL ASESMEN AWAL: MISI BONGKAR BILANGAN','Nama: '+(student||'-'),'Skor: '+score+'/10',''];
+ questions.forEach((d,n)=>lines.push((n+1)+'. '+d.q,'Jawaban murid: '+(answers[n]?answers[n].choice:'-')+' | Kunci: '+d.a+' | '+(answers[n]&&answers[n].ok?'Benar':'Belum benar'),'Kemampuan: '+d.s,''));
+ const w=window.open('','_blank');
+ if(!w){alert('Izinkan pop-up di browser untuk mencetak hasil.');return;}
+ const pre=w.document.createElement('pre');pre.style.cssText='white-space:pre-wrap;font:14px Arial;line-height:1.6;padding:24px';pre.textContent=lines.join('\n');w.document.body.appendChild(pre);w.document.title='Hasil Asesmen Misi Bongkar Bilangan';w.focus();w.print();
+});
+show('home');
+})();
+</script>
+</body>
+</html>
